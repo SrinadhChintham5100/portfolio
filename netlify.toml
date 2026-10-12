@@ -1,0 +1,26 @@
+# netlify.toml — tells Netlify how to build and serve the site.
+# Because this file lives in the repo, the settings are versioned with your code
+# ("configuration as code", same idea as your Terraform work).
+
+[build]
+  command = "npm run build"   # what Netlify runs
+  publish = "dist"            # the folder it uploads to its CDN
+
+[build.environment]
+  NODE_VERSION = "20"         # pin Node so builds are reproducible
+
+# Security headers sent with every page
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# Vite puts a content hash in asset file names (index-a1b2c3.js),
+# so they can be cached "forever" — a new build gets new names.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
